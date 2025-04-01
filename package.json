@@ -1,0 +1,26 @@
+{
+  "name": "misw-4103-cypress",
+  "version": "1.0.0",
+  "license": "MIT",
+  "author": "",
+  "description": "Repositorio base para el uso Pruebas Automatizadas utilizando Cypress",
+  "keywords": [
+    "cypress",
+    "misw"
+  ],
+  "main": "cypress.config.js",
+  "directories": {
+    "test": "__tests__"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "prepare": "npx cypress install",
+    "test": "cypress run --browser ${BROWSER:-chromium}",
+    "test:ui": "cypress open"
+  },
+  "dependencies": {
+    "cypress": "^14.2.0"
+  }
+}
