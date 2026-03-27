@@ -13,11 +13,11 @@
     "test": "__tests__"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.0.0"
   },
   "scripts": {
     "prepare": "npx cypress install",
-    "test": "cypress run --browser ${BROWSER:-chromium}",
+    "test": "cypress run --browser ${BROWSER:-electron}",
     "test:ui": "cypress open"
   },
   "dependencies": {
