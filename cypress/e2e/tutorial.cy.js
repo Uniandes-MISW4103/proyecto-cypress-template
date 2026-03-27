@@ -1,8 +1,7 @@
 describe("Testing basic Angular registration", () => {
   beforeEach(() => {
     cy.visit("/register");
-    cy.wait(7000);
-    cy.get("button").click();
+    cy.get("button").should("be.visible").click();
   });
 
   it("Test links between registration and login page", () => {
@@ -14,10 +13,7 @@ describe("Testing basic Angular registration", () => {
 
   it("Test form feedback", () => {
     cy.get("button.btn.btn-primary").click();
-    cy.wait(1000);
-    cy.get("div.invalid-feedback").then(($divs) => {
-      expect($divs.length).to.equal(4);
-    });
+    cy.get("div.invalid-feedback").should("have.length", 4);
   });
 
   it("Create an user and login", () => {
@@ -28,18 +24,12 @@ describe("Testing basic Angular registration", () => {
       cy.get('input[formcontrolname="password"]').type("MISO4208");
       cy.get("button.btn.btn-primary").click();
     });
-    cy.wait(1000);
-    //Redirected to login
     cy.get("div.alert.alert-success").should("be.visible");
     cy.get("form").within(() => {
       cy.get('input[formcontrolname="username"]').type("pruebas");
       cy.get('input[formcontrolname="password"]').type("MISO4208");
       cy.get("button.btn.btn-primary").click();
     });
-    cy.wait(1000);
-    //logged in
-    cy.get("h1").then(($header) => {
-      expect($header[0].innerText).to.equal("Hi Monitor!");
-    });
+    cy.get("h1").invoke("text").should("equal", "Hi Monitor!");
   });
 });
