@@ -21,6 +21,6 @@
     "test:ui": "cypress open"
   },
   "dependencies": {
-    "cypress": "^14.2.0"
+    "cypress": "~16.1.1"
   }
 }
