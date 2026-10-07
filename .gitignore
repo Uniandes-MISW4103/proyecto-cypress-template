@@ -4,3 +4,8 @@ cypress/screenshots/
 
 *.png
 *.html
+
+node_modules/
+
+# Only the root lockfile of the student repository is versioned (see proyecto-base)
+package-lock.json
