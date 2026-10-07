@@ -9,15 +9,12 @@
     "misw"
   ],
   "main": "cypress.config.js",
-  "directories": {
-    "test": "__tests__"
-  },
   "engines": {
     "node": ">=24"
   },
   "scripts": {
     "prepare": "npx cypress install",
-    "test": "cypress run --browser ${BROWSER:-electron}",
+    "test": "cypress run",
     "test:ui": "cypress open"
   },
   "dependencies": {
