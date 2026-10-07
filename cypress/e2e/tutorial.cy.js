@@ -1,7 +1,9 @@
 describe("Testing basic Angular registration", () => {
   beforeEach(() => {
     cy.visit("/register");
-    cy.get("button").should("be.visible").click();
+    // StackBlitz shows "Starting dev server" before its run button appears, which can take
+    // longer than Cypress' default 4 s timeout.
+    cy.get("button", { timeout: 30000 }).should("be.visible").click();
   });
 
   it("Test links between registration and login page", () => {
