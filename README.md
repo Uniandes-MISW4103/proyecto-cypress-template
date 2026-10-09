@@ -48,6 +48,7 @@ instalado, ejecuten desde la carpeta del módulo, por ejemplo `npx cypress run -
 misw-4103-cypress/
 ├── .nvmrc
 ├── package.json
+├── abp.cjs                    # lee la configuración de la aplicación bajo pruebas (.env)
 ├── cypress.config.js          # configuración de Cypress
 └── cypress/
     ├── e2e/tutorial.cy.js     # ejemplo incluido
@@ -59,22 +60,43 @@ Las capturas de pantalla de pruebas fallidas quedan en `cypress/screenshots/` (e
 
 ## Configuración
 
-`cypress.config.js` define `e2e.baseUrl`, la URL base que usan `cy.visit("/...")` y las aserciones
-sobre la URL. Por defecto apunta al demo de StackBlitz; cámbienla por la URL de su aplicación (por
-ejemplo, `http://localhost:2368` para Ghost). Otras opciones disponibles (tiempos de espera,
-_viewport_, video) están en la [referencia de configuración](https://docs.cypress.io/app/references/configuration).
+La URL y el administrador de la aplicación bajo pruebas (ABP) están en el archivo `.env` de la raíz
+del repositorio, el mismo que usa `npm run abp:up` para desplegar Ghost. No los copien en el módulo:
+`abp.cjs` lee ese archivo y `cypress.config.js` los usa así:
+
+- `e2e.baseUrl` es `ABP_URL`: `cy.visit("/ghost/")` abre la ABP.
+- Las pruebas leen las variables con `Cypress.expose`:
+
+  ```javascript
+  cy.get("#identification").type(Cypress.expose("ABP_ADMIN_EMAIL"));
+  cy.get("#password").type(Cypress.expose("ABP_ADMIN_PASSWORD"));
+  ```
+
+Las variables disponibles son `ABP_URL`, `ABP_RC_URL` (la versión de Ghost para regresión visual),
+`ABP_ADMIN_NAME`, `ABP_ADMIN_EMAIL` y `ABP_ADMIN_PASSWORD`. Una variable de entorno con el mismo
+nombre tiene prioridad sobre el `.env`. Fuera de un repositorio del proyecto (sin `.env`) se usan los
+valores por defecto de `abp.cjs`.
+
+> [!IMPORTANT]
+> Cypress verifica al iniciar que `baseUrl` responde: levanten la ABP (`npm run abp:up` desde la
+> raíz) antes de ejecutar las pruebas, incluso el ejemplo.
+
+Otras opciones disponibles (tiempos de espera, _viewport_, video) están en la
+[referencia de configuración](https://docs.cypress.io/app/references/configuration).
 
 ## Ejemplo incluido
 
 `cypress/e2e/tutorial.cy.js` prueba el demo
 [angular-6-registration-login-example](https://angular-6-registration-login-example.stackblitz.io)
-alojado en StackBlitz. Antes de cada prueba visita `/register` y hace clic en el botón con el que
-StackBlitz inicia el proyecto (espera hasta 30 s, porque StackBlitz primero muestra
-"Starting dev server"). Las pruebas verifican:
+alojado en StackBlitz, no la ABP: muestra cómo usar las credenciales del `.env` sin resolver las
+pruebas del proyecto. Antes de cada prueba visita la página de registro del demo (con su URL
+completa) y hace clic en el botón con el que StackBlitz inicia el proyecto (espera hasta 30 s, porque
+StackBlitz primero muestra "Starting dev server"). Las pruebas verifican:
 
 1. La navegación entre registro e inicio de sesión (`/login` ↔ `/register`).
 2. Que enviar el formulario vacío muestra los 4 mensajes de validación.
-3. El registro de un usuario y el inicio de sesión con él ("Hi Monitor!").
+3. El registro de un usuario con el nombre, el correo (como usuario) y la contraseña de
+   `ABP_ADMIN_*`, y el inicio de sesión con él ("Hi Monitor!").
 
 ## Solución de problemas
 
@@ -84,8 +106,8 @@ StackBlitz inicia el proyecto (espera hasta 30 s, porque StackBlitz primero mues
   está definida (pasa con procesos lanzados desde extensiones de VS Code, por ejemplo asistentes de
   IA). Ejecuten Cypress desde una terminal normal o eliminen la variable
   (`unset ELECTRON_RUN_AS_NODE`).
-- **`Cypress could not verify that this server is running`**: la `baseUrl` no responde; revisen que
-  la aplicación esté levantada.
+- **`Cypress could not verify that this server is running`**: la ABP no responde en `ABP_URL`;
+  levántenla con `npm run abp:up` desde la raíz.
 - **Falla el `beforeEach`**: el demo es un sitio externo; verifiquen que carga en el navegador.
 - **Advertencia `EBADENGINE`**: están usando una versión de Node.js anterior a la 24.
 
